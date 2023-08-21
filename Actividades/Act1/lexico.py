@@ -5,31 +5,39 @@ class Lexer:
         self.tokens = ['for', 'do', 'while', 'if', 'else']
         arreglo = []
         current_token = ""
+        numeroLinea = 1
         for char in text:
+            if char == '\n':
+                if current_token != "":
+                    arreglo.append((current_token, numeroLinea))
+                    current_token = ""
+                numeroLinea += 1
+                continue
+
             if char in self.tokens:
                 if current_token != "":
-                    arreglo.append(current_token)
+                    arreglo.append((current_token, numeroLinea))
                     current_token = ""
                 
-                arreglo.append(char)
+                arreglo.append((char, numeroLinea))
             elif char.isspace():
                 if current_token != "":
-                    arreglo.append(current_token)
+                    arreglo.append((current_token, numeroLinea))
                     current_token = ""
             else:
                 current_token += char
         if current_token != "":
-            arreglo.append(current_token)
+            arreglo.append((current_token, numeroLinea))
         return arreglo
 
     def analyze(self, text):
         arreglo = self.tokenize(text)
         result = ""
-        for token in arreglo:
+        for token, numeroLinea in arreglo:
             if token in self.tokens:
-                result += f"{token} es reservada \n"
+                result += f"Linea{numeroLinea} ({token}) es reservada \n"
             else:
-                result = "error de léxico"
+                result += f"Linea{numeroLinea} ({token}) no reservada \n"
         
         return result
 
